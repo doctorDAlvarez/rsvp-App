@@ -1,3 +1,5 @@
+//RSVP_APP
+
 document.addEventListener("DOMContentLoaded", () => {
 
 
@@ -5,8 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = form.querySelector('input');
   const mainDiv = document.querySelector(".main");
   const ul = document.getElementById("invitedList");
-
-
   const div = document.createElement("div");
   const filter_label = document.createElement("label");
   const filterBox = document.createElement("input");
@@ -34,10 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let li = lis[i];
         li.style.display = "";
       }
-
     }
-
-  });
+    });
 
 
 
@@ -47,21 +45,18 @@ document.addEventListener("DOMContentLoaded", () => {
       element[prop] = value;
       return element;
     }
+    function appendToLI(elementName, prop, value) {
+      const element = createElement(elementName, prop, value);
+      li.appendChild(element);
+      return element;
+    }
 
-    const li = createElement("li", "textContent", text);
-
-    const label = createElement('label', "textContent", "Confirmed");
-
-    const checkbox = createElement('input', "type", "checkbox");
-    label.appendChild(checkbox);
-    li.appendChild(label);
-
-    const edit_b = createElement('button', "textContent", "edit");
-    li.appendChild(edit_b);
-
-    const rem_b = createElement('button', "textContent", "remove");
-    li.appendChild(rem_b);
-
+    const li = document.createElement("li");
+    appendToLI("span", "textContent", text)
+    appendToLI('label', "textContent", "Confirmed")
+      .appendChild(createElement('input', "type", "checkbox"));
+    appendToLI('button', "textContent", "edit");
+    appendToLI('button', "textContent", "remove");
     return li;
   }
 
@@ -69,8 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const text = input.value;
     input.value = "";
-    const LI = createLI(text)
-    ul.appendChild(LI);
+    const li = createLI(text)
+    ul.appendChild(li);
   });
 
   ul.addEventListener("change", (e) => {
@@ -83,33 +78,38 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       listItem.className = 'unresponded';
     }
-  });
+    });
 
   ul.addEventListener("click", (e) => {
-    const button = e.target;
-    const li = button.parentNode;
-    const ul = li.parentNode;
-    const label = button.previousElementSibling;
-    if (button.textContent === "remove") {
-        ul.removeChild(li);
-    } else if (button.textContent === "edit") {
-        button.textContent = "save edited value";
-        label.firstElementChild.type = "text";
-        label.firstElementChild.value = li.firstChild.textContent;
-        li.firstChild.textContent = "";
-        label.firstChild.textContent = "";
-
-
-    } else if (button.textContent === "save edited value") {
+    if (e.target.tagName === "BUTTON") {
+      const button = e.target;
+      const li = button.parentNode;
+      const ul = li.parentNode;
+      const label = button.previousElementSibling;
+      const action = button.textContent;
+      const nameActions = {
+        remove: () => {
+          ul.removeChild(li);
+        },
+        edit: () => {
+          const span = li.firstElementChild;
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = span.textContent;
+          li.insertBefore(input, span);
+          li.removeChild(span);
+          button.textContent = "save";
+        },
+        save: () => {
+          const input = li.firstElementChild;
+          const span = document.createElement("span");
+          span.textContent = input.value;
+          li.insertBefore(span, input);
+          li.removeChild(input);
           button.textContent = "edit";
-          label.firstElementChild.type = "checkbox";
-          li.className = "unresponded";
-          label.firstChild.textContent = "Confirmed";
-          li.firstChild.textContent = label.firstElementChild.value;
-
-    }
-
-  });
-
-
+        }
+      };
+        nameActions[action]();
+      }
+    });
 });
