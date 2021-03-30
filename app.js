@@ -63,9 +63,24 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const text = input.value;
-    input.value = "";
-    const li = createLI(text)
-    ul.appendChild(li);
+    const members = ul.querySelectorAll("span");
+    const areDup = members => {
+      for (let i = 0; i < members.length; i++){
+        if (members[i].textContent === text) {
+          return true;
+          break
+        }
+      }
+    }
+    if (text !== "" && !areDup(members)) {
+      input.value = "";
+      const li = createLI(text)
+      ul.appendChild(li);
+    } else if (areDup(members)){
+      alert("Name already added")
+    } else {
+      alert("invalid name")
+    }
   });
 
   ul.addEventListener("change", (e) => {
