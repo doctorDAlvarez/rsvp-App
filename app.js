@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let li = lis[i];
         if (li.className === "responded") {
           li.style.display = "";
+          li.childNodes[1].style.display = "none";
         } else {
           li.style.display = "none";
         }
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       for (let i = 0; i < lis.length; i++) {
         let li = lis[i];
         li.style.display = "";
+        li.childNodes[1].style.display = "";
       }
     }
     });
